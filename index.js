@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var redis = require('redis');
 var Promise = require('bluebird');
 var co = require('co');
@@ -7,7 +8,7 @@ var util = require('util');
 var rl = readline.createInterface(process.stdin,process.stdout);
 var program = require('commander');
 
-program.version('1.0.0')
+program.version('1.0.1')
 	.usage("rdcli [OPTIONS] [cmd [arg [arg ...]]]")
 	.option("-h, --host <host>",'Server hostname (default: 127.0.0.1).')
 	.option("-p, --port <port>","Server port (default: 6379).",parseInt)
