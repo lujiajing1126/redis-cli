@@ -1,0 +1,36 @@
+{
+  "name": "redis-cli",
+  "version": "1.0.0",
+  "description": "A Redis Cli Tool",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --harmony index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "redis",
+    "cil"
+  ],
+  "bin": {
+    "rdcli": "./index.js"
+  },
+  "preferGlobal": true,
+  "author": "Megrez Lu <lujiajing1126@gmail.com> (http://megrez.dajipai.org)",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^2.9.34",
+    "co": "^4.6.0",
+    "commander": "^2.8.1",
+    "inquirer": "^0.9.0",
+    "lodash": "^3.10.0",
+    "redis": "^0.12.1"
+  },
+  "repository": {
+	"type": "git",
+	"url": "https://github.com/lujiajing1126/redis-cli"
+  },
+  "engines": {
+    "node": ">=0.11.0",
+    "iojs": ">=1.0.0"
+  }
+}
