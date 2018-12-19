@@ -1,5 +1,6 @@
-var program = require('commander');
-var url = require('url');
+const program = require('commander');
+const url = require('url');
+const RedisClient = require('./lib/redis').RedisClient;
 
 program.version('1.0.2')
 	.usage("rdcli [OPTIONS] [cmd [arg [arg ...]]]")
@@ -21,9 +22,9 @@ var socket = program.socket;
 if(mode.toLowerCase() == 'redis') {
 	var redisClient;
 	if(socket !== undefined) {
-		redisClient = require('./lib/redis')(socket);
+		redisClient = new RedisClient(socket);
 	} else {
-		redisClient = require('./lib/redis')(host, port, auth);
+		redisClient = new RedisClient(host, port, auth);
 	}	
 	if(program.args && program.args.length > 0){
 		redisClient.execute(program.args)
