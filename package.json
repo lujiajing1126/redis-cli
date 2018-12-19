@@ -4,7 +4,7 @@
   "description": "A Redis Cli Tool",
   "main": "index.js",
   "scripts": {
-    "start": "node --harmony index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -28,9 +28,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/lujiajing1126/redis-cli"
-  },
-  "engines": {
-    "node": ">=0.11.0",
-    "iojs": ">=1.0.0"
   }
 }
