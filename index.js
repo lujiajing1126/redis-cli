@@ -2,7 +2,7 @@ const program = require('commander');
 const url = require('url');
 const RedisClient = require('./lib/redis').RedisClient;
 
-program.version('1.0.2')
+program.version('2.0.0')
 	.usage("rdcli [OPTIONS] [cmd [arg [arg ...]]]")
 	.option("-h, --host <hostname>",'Server hostname (default: 127.0.0.1).')
 	.option("-p, --port <port>","Server port (default: 6379).", parseInt)
@@ -12,15 +12,15 @@ program.version('1.0.2')
 	.option("-m, --mode <mode>","Server Type, only redis available now.")
 	.parse(process.argv);
 
-var parsedURL = program.uri ? url.parse(program.uri) : {};
-var host = program.host || parsedURL.hostname || "127.0.0.1";
-var port = program.port || parsedURL.port || 6379;
-var auth = program.auth || null;
-var mode = program.mode || "redis";
+const parsedURL = program.uri ? url.parse(program.uri) : {};
+const host = program.host || parsedURL.hostname || "127.0.0.1";
+const port = program.port || parsedURL.port || 6379;
+const auth = program.auth || null;
+const mode = program.mode || "redis";
 	
-var socket = program.socket;
+const socket = program.socket;
 if(mode.toLowerCase() == 'redis') {
-	var redisClient;
+	let redisClient;
 	if(socket !== undefined) {
 		redisClient = new RedisClient(socket);
 	} else {

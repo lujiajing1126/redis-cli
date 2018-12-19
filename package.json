@@ -22,7 +22,6 @@
     "colors": "^1.3.3",
     "commander": "^2.19.0",
     "inquirer": "^6.2.1",
-    "lodash": "^4.17.11",
     "redis": "^2.8.0"
   },
   "repository": {
