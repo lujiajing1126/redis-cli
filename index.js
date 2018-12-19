@@ -1,5 +1,3 @@
-var co = require('co');
-var readline = require('readline');
 var program = require('commander');
 var url = require('url');
 
@@ -21,10 +19,19 @@ var mode = program.mode || "redis";
 	
 var socket = program.socket;
 if(mode.toLowerCase() == 'redis') {
+	var redisClient;
 	if(socket !== undefined) {
-		require('./lib/redis')(socket);
+		redisClient = require('./lib/redis')(socket);
 	} else {
-		require('./lib/redis')(host, port, auth);
+		redisClient = require('./lib/redis')(host, port, auth);
+	}	
+	if(program.args && program.args.length > 0){
+		redisClient.execute(program.args)
+		.then(function(){
+			process.exit(0);
+		});
+	} else {
+		redisClient.attachEvent();
 	}
 } else {
 	console.log("Not Support %s Now!", mode);
