@@ -1,3 +1,6 @@
+[![npm version](https://badge.fury.io/js/redis-cli.svg)](https://badge.fury.io/js/redis-cli)
+
+
 ## Redis-Cli
 
 ### Install
