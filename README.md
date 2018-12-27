@@ -19,9 +19,10 @@ rdcli -h 10.4.23.235
 ```
 ## Roadmap
 
+  - support `block` commands
   - more available cli params like official redis-cli
   - handle cluster-like redis (PaaS) which do not support **ALL** CMD
-  - support MEMCACHE protocal
+  - support MEMCACHE protocol
 
 
 ## LISENCE
