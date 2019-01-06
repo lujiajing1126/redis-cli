@@ -25,6 +25,6 @@ rdcli -h 10.4.23.235
   - support MEMCACHE protocol
 
 
-## LISENCE
+## LICENSE
 
 MIT
