@@ -1,8 +1,9 @@
 const program = require('commander');
 const url = require('url');
 const RedisClient = require('./lib/redis').RedisClient;
+const version = require('./package.json').version;
 
-program.version('1.1.2')
+program.version(version)
 	.usage("rdcli [OPTIONS] [cmd [arg [arg ...]]]")
 	.option("-h, --host <hostname>", 'Server hostname (default: 127.0.0.1).')
 	.option("-p, --port <port>", "Server port (default: 6379).", parseInt)
