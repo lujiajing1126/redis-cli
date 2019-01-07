@@ -15,7 +15,11 @@
     "rdcli": "./bin/rdcli"
   },
   "preferGlobal": true,
-  "author": "Megrez Lu <lujiajing1126@gmail.com> (http://megrez.dajipai.org)",
+  "author": {
+    "name": "Megrez Lu",
+    "email": "lujiajing1126@gmail.com",
+    "url": "https://www.coder.dog/"
+  },
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.3",
