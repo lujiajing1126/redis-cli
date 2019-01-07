@@ -1,5 +1,5 @@
 [![npm version](https://badge.fury.io/js/redis-cli.svg)](https://badge.fury.io/js/redis-cli)
-
+[![CircleCI](https://circleci.com/gh/lujiajing1126/redis-cli.svg?style=svg)](https://circleci.com/gh/lujiajing1126/redis-cli)
 
 ## Redis-Cli
 
