@@ -60,16 +60,19 @@ jobs:
   node-v6:
     docker:
       - image: node:6
+      - image: circleci/redis:5.0.3-alpine
     steps:
       - test-nodejs-v6
   node-v8:
     docker:
       - image: node:8
+      - image: circleci/redis:5.0.3-alpine
     steps:
       - test-nodejs
   node-v10:
     docker:
       - image: node:10
+      - image: circleci/redis:5.0.3-alpine
     steps:
       - test-nodejs
 
