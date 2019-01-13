@@ -37,6 +37,8 @@ beforeAll(() => {
      * https://github.com/NodeRedis/node_redis#clientunref
      */
     redisClient._redis_client.unref();
+    // remove all listener to avoid async callback
+    redisClient._redis_client.removeAllListeners();
     // mock `console.log`
     spy.log = jest.spyOn(global.console, 'log').mockImplementation(storeLog);
     return redisClient.execute(['flushall']);
