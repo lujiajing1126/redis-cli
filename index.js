@@ -30,7 +30,7 @@ if (mode.toLowerCase() == 'redis') {
 	if (program.args && program.args.length > 0) {
 		redisClient.execute(program.args)
 			.then(function () {
-				process.exit(0);
+				redisClient.client.quit();
 			});
 	} else {
 		redisClient.attachEvent();

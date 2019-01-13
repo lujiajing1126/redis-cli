@@ -29,7 +29,8 @@
     "splitargs": "0.0.7"
   },
   "devDependencies": {
-    "jest": "^23.6.0"
+    "jest": "^23.6.0",
+    "mockery": "^2.1.0"
   },
   "repository": {
     "type": "git",

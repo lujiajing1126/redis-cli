@@ -1,7 +1,7 @@
 /**
  * Integration tests for Redis-CLI
  */
-const RedisClient = require('./redis').RedisClient;
+const RedisClient = require('../lib/redis').RedisClient;
 const util = require('util');
 const _log = global.console.log;
 const colors = require('colors');
@@ -39,14 +39,12 @@ beforeAll(() => {
     redisClient._redis_client.unref();
     // mock `console.log`
     spy.log = jest.spyOn(global.console, 'log').mockImplementation(storeLog);
-    // mock `process.exit`
-    spy.exit = jest.spyOn(process, 'exit').mockImplementation(() => {});
     return redisClient.execute(['flushall']);
 });
 
 afterAll(() => {
-    spy.log.mockRestore();
     redisClient._redis_client.quit();
+    spy.log.mockRestore();
 });
 
 describe('key value getter/setter', () => {
@@ -134,16 +132,6 @@ describe('array return tests', () => {
             expect(outputData).toBe(wrapOutput(`1) 3
 2) 2
 3) 1`));
-        });
-    });
-})
-
-describe('exit test', () => {
-    it('process.exit being called', () => {
-        return redisClient._exit().then(() => {
-            // check `process.exit`
-            expect(spy.exit).toHaveBeenCalled();
-            expect(spy.exit.mock.calls[0][0]).toBe(0);
         });
     });
 });
