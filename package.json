@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "jest"
+    "test": "jest --ci --reporters=default --reporters=jest-junit"
   },
   "keywords": [
     "redis",
@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "jest": "^23.6.0",
+    "jest-junit": "^6.0.1",
     "mockery": "^2.1.0"
   },
   "repository": {

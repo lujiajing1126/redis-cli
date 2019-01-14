@@ -21,6 +21,8 @@ commands:
       - run:
           name: Test
           command: npm test
+          environment:
+            JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
       - save-npm-cache
   test-nodejs-v6:
     steps:
@@ -40,6 +42,8 @@ commands:
       - run:
           name: Test
           command: npm test
+          environment:
+            JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
       - save-npm-lock
       - save-npm-cache
   save-npm-lock:
