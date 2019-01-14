@@ -24,6 +24,10 @@ commands:
           environment:
             JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
       - save-npm-cache
+      - store_test_results:
+        path: reports/junit
+      - store_artifacts:
+        path: reports/junit
   test-nodejs-v6:
     steps:
       - run:
@@ -46,6 +50,10 @@ commands:
             JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
       - save-npm-lock
       - save-npm-cache
+      - store_test_results:
+        path: reports/junit
+      - store_artifacts:
+        path: reports/junit
   save-npm-lock:
     steps:
       - save_cache:

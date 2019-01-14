@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "jest --ci --reporters=default --reporters=jest-junit"
+    "test": "jest --ci --testResultsProcessor=\"jest-junit\""
   },
   "keywords": [
     "redis",
