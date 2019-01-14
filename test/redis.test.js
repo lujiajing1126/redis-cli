@@ -115,12 +115,18 @@ describe('array return tests', () => {
     });
 });
 
-// describe('readline tests', () => {
-//     test('GET command input', () => {
-//         return new Promise((resolve) => {
-//             redisClient.attachEvent().then((rl) => {
-//                 rl.write('get unknownkey\n');
-//             });
-//         });
-//     });
-// });
+describe('readline tests', () => {
+    test('GET command input', () => {
+        const input_handler = jest.spyOn(redisClient, '_handleInput').mockImplementation(() => {});
+        return new Promise((resolve) => {
+            redisClient.attachEvent().then((rl) => {
+                rl.write("get unknownkey\n");
+                setTimeout(() => {
+                    expect(input_handler).toHaveBeenLastCalledWith("get unknownkey");
+                    input_handler.mockRestore();
+                    resolve();
+                }, 1000);
+            });
+        });
+    });
+});
