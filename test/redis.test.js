@@ -2,33 +2,13 @@
  * Integration tests for Redis-CLI
  */
 const RedisClient = require('../lib/redis').RedisClient;
-const util = require('util');
 const _log = global.console.log;
 const colors = require('colors');
 const filter = require('rxjs/operators').filter;
 
 let spy = {};
 
-let outputData = "";
 let redisClient = {};
-
-// DO NOT use arrow => here
-const storeLog = function () {
-    outputData += util.format.apply(util, Array.from(arguments));
-    outputData += "\n";
-}
-
-const wrapOutput = (line) => {
-    return line + "\n";
-}
-
-const cleanOutput = () => {
-    outputData = "";
-}
-
-beforeEach(() => {
-    cleanOutput();
-});
 
 beforeAll(() => {
     redisClient = new RedisClient("127.0.0.1", 6379);
@@ -41,114 +21,106 @@ beforeAll(() => {
     // remove all listener to avoid async callback
     redisClient.client.removeAllListeners();
     // mock `console.log`
-    spy.log = jest.spyOn(global.console, 'log').mockImplementation(storeLog);
+    spy.next = jest.spyOn(redisClient, 'next', 'set').mockImplementation(() => {});
+    spy.exit = jest.spyOn(process, 'exit').mockImplementation(() => {});
     return redisClient.execute(['flushall']);
 });
 
 afterAll(() => {
     redisClient.client.quit();
-    spy.log.mockRestore();
+    redisClient.rl.close();
+    spy.next.mockRestore();
+    spy.exit.mockRestore();
 });
 
 describe('key value getter/setter', () => {
-    it('SET key/value returns string literal OK', () => {
+    test('SET key/value returns string literal OK', () => {
         return redisClient.execute(["set", "key", "value"]).then(() => {
-            expect(spy.log).toHaveBeenCalled();
-            expect(outputData).toBe(wrapOutput("OK"));
+            expect(spy.next).toHaveBeenCalled();
+            expect(spy.next.mock.calls[0][0]).toBe("OK");
         });
     });
 
-    it('GET key returns previously set value', () => {
+    test('GET key returns previously set value', () => {
         return redisClient.execute(["get", "key"]).then(() => {
-            expect(spy.log).toHaveBeenCalled();
-            expect(outputData).toBe(wrapOutput("value"));
+            expect(spy.next).toHaveBeenCalled();
+            expect(spy.next.mock.calls[0][0]).toBe("value");
         });
     });
 
-    it('GET key returns previously set value, not equality', () => {
+    test('GET key returns previously set value, not equality', () => {
         return redisClient.execute(["get", "key"]).then(() => {
-            expect(spy.log).toHaveBeenCalled();
-            expect(outputData).not.toBe(wrapOutput("Value"));
+            expect(spy.next).toHaveBeenCalled();
+            expect(spy.next.mock.calls[0][0]).not.toBe("Value");
         });
     });
 
-    it('INCR returns with integer counter', () => {
+    test('INCR returns with integer counter', () => {
         return redisClient.execute(["set", "mykey", "10"]).then(() => {
-            expect(spy.log).toHaveBeenCalled();
-            cleanOutput()
+            expect(spy.next.mock.calls[0][0]).toBe("OK");
             return redisClient.execute(["incr", "mykey"]).then(() => {
-                expect(spy.log).toHaveBeenCalled();
-                expect(outputData).toBe(wrapOutput("(integer) 11"));
+                expect(spy.next).toHaveBeenCalled();
+                expect(spy.next).toHaveBeenLastCalledWith("(integer) 11");
             });
         });
     });
 });
 
 describe('hash getter/setter', () => {
-    it('SET hash returning 1 means a new field in the hash and value was set', () => {
+    test('SET hash returning 1 means a new field in the hash and value was set', () => {
         return redisClient.execute(["hset", "myhash", "field1", "Hello"]).then(() => {
-            expect(spy.log).toHaveBeenCalled();
-            expect(outputData).toBe(wrapOutput("(integer) 1"));
+            expect(spy.next).toHaveBeenCalled();
+            expect(spy.next.mock.calls[0][0]).toBe("(integer) 1");
         });
     });
 
-    it('GET hash return set value', () => {
+    test('GET hash return set value', () => {
         return redisClient.execute(["hget", "myhash", "field1"]).then(() => {
-            expect(spy.log).toHaveBeenCalled();
-            expect(outputData).toBe(wrapOutput("Hello"));
+            expect(spy.next).toHaveBeenCalled();
+            expect(spy.next.mock.calls[0][0]).toBe("Hello");
         });
     });
 
-    it('HGETALL displayed in rows', () => {
+    test('HGETALL displayed in rows', () => {
         return redisClient.execute(["hgetall", "myhash"]).then(() => {
-            expect(spy.log).toHaveBeenCalled();
-            expect(outputData).toBe(wrapOutput(`1) field1
-2) Hello`));
+            expect(spy.next).toHaveBeenCalled();
+            expect(spy.next.mock.calls[0][0]).toEqual(["1) field1", "2) Hello"]);
         });
     })
 });
 
 describe('test third party modules', () => {
-    it('without installing specific module', () => {
-        // TODO: check colors also!
-        colors.disable();
+    test('without installing specific module', () => {
         return redisClient.execute(["FT.SEARCH", "permits", 'car', "LIMIT", "0", "0"]).then(() => {
-            expect(spy.log).toHaveBeenCalled();
-            expect(outputData.trim()).toBe(colors.red('(error) ERR unknown command `ft.search`, with args beginning with: `permits`, `car`, `LIMIT`, `0`, `0`,'));
-            colors.enable();
+            expect(spy.next).toHaveBeenCalled();
+            expect(spy.next).toHaveBeenLastCalledWith(colors.red('(error) ERR unknown command `ft.search`, with args beginning with: `permits`, `car`, `LIMIT`, `0`, `0`, '));
         });
     });
 });
 
 describe('array return tests', () => {
-    it('lpush returns integer', () => {
+    test('lpush returns integer', () => {
         return redisClient.execute(['LPUSH', 'alist', '1', '2', '3']).then(() => {
-            expect(spy.log).toHaveBeenCalled();
-            expect(outputData).toBe(wrapOutput("(integer) 3"));
+            expect(spy.next).toHaveBeenCalled();
+            expect(spy.next.mock.calls[0][0]).toBe("(integer) 3");
         });
     });
 
 
-    it('lrange returns ints setup', () => {
+    test('lrange returns ints setup', () => {
         return redisClient.execute(['LRANGE', 'alist', '0', '-1']).then(() => {
-            expect(spy.log).toHaveBeenCalled();
-            expect(outputData).toBe(wrapOutput(`1) 3
-2) 2
-3) 1`));
+            expect(spy.next).toHaveBeenCalled();
+            expect(spy.next.mock.calls[0][0]).toEqual(["1) 3", "2) 2", "3) 1"]);
         });
     });
 });
 
-describe('readline tests', () => {
-    it('GET command input', (done) => {
-        redisClient.attachEvent().then((rl) => {
-            redisClient._subject.pipe(filter(x => typeof x === 'string')).subscribe({
-                next: (v) => {
-                    expect(v).toBe('(nil)');
-                    done();
-                }
-            });
-            rl.emit('line', 'get unknownkey');
-        });
-    });
-});
+// describe('readline tests', () => {
+//     test('GET command input', () => {
+//         return new Promise((resolve) => {
+//             redisClient.attachEvent().then((rl) => {
+//                 rl.write('get unknownkey\n');
+//             });
+//         });
+//     });
+// });
