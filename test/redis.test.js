@@ -2,6 +2,7 @@
  * Integration tests for Redis-CLI
  */
 const RedisClient = require('../lib/redis').RedisClient;
+const __PR__ = require('../lib/redis').__PR__;
 const _log = global.console.log;
 const colors = require('colors');
 const filter = require('rxjs/operators').filter;
@@ -129,4 +130,30 @@ describe('readline tests', () => {
             });
         });
     });
+
+    test('Test `exit` Command', () => {
+        const quit = jest.spyOn(redisClient.client, 'quit').mockImplementation(() => {});
+        redisClient._handleInput("exit");
+        expect(quit).toHaveBeenCalled();
+        quit.mockRestore();
+    });
+
+    test('Test `clear` Command', () => {
+        redisClient._handleInput("clear");
+        expect(spy.next).toHaveBeenCalled();
+        expect(spy.next.mock.calls[0][0]).toBe('\x1b[0f');
+    });
+
+    test('Test Normal Command', () => {
+        return redisClient._handleInput("get unknownkey").then(() => {
+            expect(spy.next).toHaveBeenCalled();
+            expect(spy.next.mock.calls[0][0]).toBe('(nil)');
+        });
+    });
+
+    test('Test Empty Command', () => {
+        redisClient._handleInput("");
+        expect(spy.next).toHaveBeenCalled();
+        expect(spy.next.mock.calls[0][0]).toBe(__PR__);
+    })
 });
