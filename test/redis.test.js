@@ -5,6 +5,7 @@ const RedisClient = require('../lib/redis').RedisClient;
 const util = require('util');
 const _log = global.console.log;
 const colors = require('colors');
+const filter = require('rxjs/operators').filter;
 
 let spy = {};
 
@@ -12,7 +13,7 @@ let outputData = "";
 let redisClient = {};
 
 // DO NOT use arrow => here
-const storeLog = function() {
+const storeLog = function () {
     outputData += util.format.apply(util, Array.from(arguments));
     outputData += "\n";
 }
@@ -36,16 +37,16 @@ beforeAll(() => {
      * This is an experimental feature, as documented in the following site:
      * https://github.com/NodeRedis/node_redis#clientunref
      */
-    redisClient._redis_client.unref();
+    redisClient.client.unref();
     // remove all listener to avoid async callback
-    redisClient._redis_client.removeAllListeners();
+    redisClient.client.removeAllListeners();
     // mock `console.log`
     spy.log = jest.spyOn(global.console, 'log').mockImplementation(storeLog);
     return redisClient.execute(['flushall']);
 });
 
 afterAll(() => {
-    redisClient._redis_client.quit();
+    redisClient.client.quit();
     spy.log.mockRestore();
 });
 
@@ -134,6 +135,20 @@ describe('array return tests', () => {
             expect(outputData).toBe(wrapOutput(`1) 3
 2) 2
 3) 1`));
+        });
+    });
+});
+
+describe('readline tests', () => {
+    it('GET command input', (done) => {
+        redisClient.attachEvent().then((rl) => {
+            redisClient._subject.pipe(filter(x => typeof x === 'string')).subscribe({
+                next: (v) => {
+                    expect(v).toBe('(nil)');
+                    done();
+                }
+            });
+            rl.emit('line', 'get unknownkey');
         });
     });
 });
