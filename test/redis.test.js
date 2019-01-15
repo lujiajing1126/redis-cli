@@ -157,22 +157,3 @@ describe('readline tests', () => {
         expect(spy.next.mock.calls[0][0]).toBe(__PR__);
     })
 });
-
-
-describe('test rxjs.Subject', () => {
-    it('array output', () => {
-
-    });
-
-    it('string output', () => {
-
-    });
-
-    it('Prompt output', () => {
-
-    });
-
-    it('exit output', () => {
-
-    });
-});
