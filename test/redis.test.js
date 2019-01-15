@@ -5,7 +5,7 @@ const RedisClient = require('../lib/redis').RedisClient;
 const __PR__ = require('../lib/redis').__PR__;
 const _log = global.console.log;
 const colors = require('colors');
-const filter = require('rxjs/operators').filter;
+const readline = require('readline');
 
 let spy = {};
 
@@ -138,9 +138,15 @@ describe('readline tests', () => {
     });
 
     it('Test `clear` Command', () => {
+        const cursorTo = jest.spyOn(readline, 'cursorTo').mockImplementation(() => {});
+        const clearScreenDown = jest.spyOn(readline, 'clearScreenDown').mockImplementation(() => {});
         redisClient._handleInput("clear");
         expect(spy.next).toHaveBeenCalled();
         expect(spy.next).toHaveBeenCalledWith('\x1b[0f');
+        expect(cursorTo).toHaveBeenCalled();
+        expect(clearScreenDown).toHaveBeenCalled();
+        cursorTo.mockRestore();
+        clearScreenDown.mockRestore();
     });
 
     it('Test Normal Command', () => {
