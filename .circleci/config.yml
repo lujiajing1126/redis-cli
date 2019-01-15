@@ -19,8 +19,11 @@ commands:
           name: Install dependencies
           command: npm ci
       - run:
+          name: Codecov
+          command: npm i -g codecov
+      - run:
           name: Test
-          command: npm test
+          command: npm test && codecov
           environment:
             JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
       - save-npm-cache
@@ -44,8 +47,11 @@ commands:
           name: Install dependencies
           command: npm install
       - run:
+          name: Codecov
+          command: npm i -g codecov
+      - run:
           name: Test
-          command: npm test
+          command: npm test && codecov
           environment:
             JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
       - save-npm-lock
