@@ -140,7 +140,7 @@ describe('readline tests', () => {
     it('Test `clear` Command', () => {
         redisClient._handleInput("clear");
         expect(spy.next).toHaveBeenCalled();
-        expect(spy.next.mock.calls[0][0]).toBe('\x1b[0f');
+        expect(spy.next).toHaveBeenCalledWith('\x1b[0f');
     });
 
     it('Test Normal Command', () => {
@@ -152,7 +152,7 @@ describe('readline tests', () => {
 
     it('Test Empty Command', () => {
         redisClient._handleInput("");
-        expect(spy.next).toHaveBeenCalled();
-        expect(spy.next.mock.calls[0][0]).toBe(__PR__);
+        expect(spy.next).toBeCalledTimes(1);
+        expect(spy.next).toHaveBeenCalledWith(__PR__);
     })
 });
