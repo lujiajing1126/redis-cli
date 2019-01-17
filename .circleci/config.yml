@@ -19,9 +19,18 @@ commands:
           name: Install dependencies
           command: npm ci
       - run:
+          name: Codecov
+          command: npm i -g codecov
+      - run:
           name: Test
-          command: npm test
+          command: npm test && codecov
+          environment:
+            JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
       - save-npm-cache
+      - store_test_results:
+          path: reports/junit
+      - store_artifacts:
+          path: reports/junit
   test-nodejs-v6:
     steps:
       - run:
@@ -38,10 +47,19 @@ commands:
           name: Install dependencies
           command: npm install
       - run:
+          name: Codecov
+          command: npm i -g codecov
+      - run:
           name: Test
-          command: npm test
+          command: npm test && codecov
+          environment:
+            JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
       - save-npm-lock
       - save-npm-cache
+      - store_test_results:
+          path: reports/junit
+      - store_artifacts:
+          path: reports/junit
   save-npm-lock:
     steps:
       - save_cache:
@@ -60,16 +78,19 @@ jobs:
   node-v6:
     docker:
       - image: node:6
+      - image: circleci/redis:5.0.3-alpine
     steps:
       - test-nodejs-v6
   node-v8:
     docker:
       - image: node:8
+      - image: circleci/redis:5.0.3-alpine
     steps:
       - test-nodejs
   node-v10:
     docker:
       - image: node:10
+      - image: circleci/redis:5.0.3-alpine
     steps:
       - test-nodejs
 

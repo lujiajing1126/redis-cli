@@ -1,4 +1,4 @@
-const InputBuffer = require('./buf');
+const InputBuffer = require('../lib/buf');
 
 test('string without backslash', () => {
     let buf = new InputBuffer("abc");

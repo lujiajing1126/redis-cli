@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "jest"
+    "test": "jest --ci --reporters=default --reporters=\"jest-junit\""
   },
   "keywords": [
     "redis",
@@ -25,11 +25,15 @@
     "bluebird": "^3.5.3",
     "colors": "^1.3.3",
     "commander": "^2.19.0",
+    "core-js": "^3.0.0-beta.8",
     "redis": "^2.8.0",
+    "rxjs": "^6.3.3",
     "splitargs": "0.0.7"
   },
   "devDependencies": {
-    "jest": "^23.6.0"
+    "jest": "^23.6.0",
+    "jest-junit": "^6.0.1",
+    "mockery": "^2.1.0"
   },
   "repository": {
     "type": "git",
