@@ -27,7 +27,6 @@
     "commander": "^2.19.0",
     "core-js": "^3.0.0-beta.8",
     "redis": "^2.8.0",
-    "rxjs": "^6.3.3",
     "splitargs": "0.0.7"
   },
   "devDependencies": {
