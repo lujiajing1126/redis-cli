@@ -6,3 +6,4 @@ node_modules
 coverage
 junit.xml
 .DS_Store
+.vscode
