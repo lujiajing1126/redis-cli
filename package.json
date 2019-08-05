@@ -20,6 +20,12 @@
     "email": "lujiajing1126@gmail.com",
     "url": "https://www.coder.dog/"
   },
+  "contributors": [
+    {
+      "name": "Guy Korland",
+      "email": "gkorland@gmail.com"
+    }
+  ],
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.3",
