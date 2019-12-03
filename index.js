@@ -13,10 +13,10 @@ program.version(version)
 	.option("-m, --mode <mode>", "Server Type, only redis available now.")
 	.parse(process.argv);
 
-const parsedURL = program.uri ? url.parse(program.uri) : {};
+const parsedURL = program.uri ? new url.URL(program.uri) : {};
 const host = program.host || parsedURL.hostname || "127.0.0.1";
 const port = program.port || parsedURL.port || 6379;
-const auth = program.auth || null;
+const auth = program.auth || parsedURL.password;
 const mode = program.mode || "redis";
 
 const socket = program.socket;
