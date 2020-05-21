@@ -11,6 +11,7 @@ program.version(version)
 	.option("-a, --auth <password>", 'Server password.')
 	.option("-u, --uri <uri>", 'Server URI.')
 	.option("-m, --mode <mode>", "Server Type, only redis available now.")
+	.option("-c, --cluster", "Enable cluster mode (follow -ASK and -MOVED redirections).")
 	.parse(process.argv);
 
 const parsedURL = program.uri ? new url.URL(program.uri) : {};
@@ -18,6 +19,7 @@ const host = program.host || parsedURL.hostname || "127.0.0.1";
 const port = program.port || parsedURL.port || 6379;
 const auth = program.auth || parsedURL.password;
 const mode = program.mode || "redis";
+const cluster = program.cluster || false;
 
 const socket = program.socket;
 if (mode.toLowerCase() == 'redis') {
