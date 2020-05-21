@@ -30,13 +30,13 @@
   "dependencies": {
     "bluebird": "^3.7.2",
     "colors": "^1.4.0",
-    "commander": "^4.0.1",
-    "core-js": "^3.4.7",
-    "redis": "^2.8.0",
+    "commander": "^5.1.0",
+    "core-js": "^3.6.5",
+    "redis": "^3.0.2",
     "splitargs": "0.0.7"
   },
   "devDependencies": {
-    "jest": "^24.9.0",
+    "jest": "^26.0.1",
     "jest-junit": "^10.0.0",
     "mockery": "^2.1.0"
   },
