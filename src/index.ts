@@ -107,7 +107,9 @@ if (mode.toLowerCase() == 'redis') {
 				}
 			}
 		}
-		redisClient.execute(cli._, callback);
+		redisClient.execute(cli._, callback).then(() => {
+			redisClient.shutdown();
+		});
 	} else {
 		redisClient.attachEvent();
 	}

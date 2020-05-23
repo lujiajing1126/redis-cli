@@ -87,10 +87,6 @@ export class BaseExecutor implements Executor {
 
         this.executor = this.client[`${this.cmd}Async`];
 
-        if (this.executor === undefined) {
-            throw new Error("cannot find executor...");
-        }
-
         // For custom commands, for example, commands in custom modules
         if (typeof this.executor !== "function") {
             this.executor = this.client[`send_commandAsync`];

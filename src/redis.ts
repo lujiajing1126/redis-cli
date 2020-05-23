@@ -14,7 +14,7 @@ class ExitResult {
 	}
 }
 
-const __PR__ = new PromptResult();
+export const __PR__ = new PromptResult();
 const __NORMAL_EXIT__ = new ExitResult(0);
 const __ABNORMAL_EXIT__ = new ExitResult(-1);
 
@@ -75,7 +75,7 @@ export class GUIRedisClient {
 		});
 	}
 
-	execute(commands: string[], callback: ConsumerFunc, client?: RedisClient) {
+	execute(commands: string[], callback: ConsumerFunc, client?: RedisClient): Promise<void> {
 		let c = client ?? this.defaultClient;
 		this.executor = BaseExecutor.of(c, commands);
 		return this.executor.run(callback);
@@ -92,7 +92,7 @@ export class GUIRedisClient {
 		});
 	}
 
-	handleInput(line: string) {
+	handleInput(line: string): Promise<void> {
 		line = new InputBuffer(line).render();
 		try {
 			let command = line.trim();
@@ -102,7 +102,7 @@ export class GUIRedisClient {
 			}
 			let commands: string[] = s(command);
 			if (commands.length !== 0) { // we have commands, so process, otherwise just a new prompt
-				let CMD = commands.shift().toLowerCase();
+				const CMD = commands.shift().toLowerCase();
 				//`exit` and `clear` are not true commands, just part of REPL
 				if (CMD === 'exit') {
 					// all connections will be closed after `RedisClient` quit
@@ -140,15 +140,13 @@ export class GUIRedisClient {
 					this.next = __PR__;
 				}
 			} else {
-				this.next = red((result as Left<Error>).left.message);
+				this.next = red("(error) " + (result as Left<Error>).left.message);
 				this.next = __PR__;
 			}
 		} else {
 			let resp = (result as Right<string | string[]>).right;
 			if (Array.isArray(resp)) {
-				for (let item of resp) {
-					this.next = green(item);
-				}
+				this.next = resp.map((item) => green(item));
 			} else {
 				this.next = green(resp);
 			}
@@ -192,6 +190,8 @@ export class GUIRedisClient {
 				return this.clusters[server];
 			}
 			let client = GUIRedisClient.createRedisClient(server);
+			client.removeAllListeners();
+			client.unref();
 			if (key !== undefined) {
 				this.keyLocationCache[key] = server;
 				this.clusters[server] = client;
@@ -208,11 +208,16 @@ export class GUIRedisClient {
 	}
 
 	shutdown() {
-		Object.entries(this.clusters).forEach(([name, client]) => {
+		Object.entries(this.clusters).forEach(([_name, client]) => {
+			client.removeAllListeners();
 			client.quit();
 		});
+		if (this.rl) {
+			this.rl.close();
+		}
+	}
+
+	get GUIInterface() {
+		return this.rl;
 	}
 }
-
-exports.RedisClient = RedisClient
-exports.__PR__ = __PR__
