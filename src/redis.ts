@@ -53,7 +53,6 @@ export class GUIRedisClient {
 		this.clusterMode = opt.cluster;
 
 		this.attachRedisEvent(this.defaultClient);
-		this.initReadline();
 	}
 
 	private initReadline() {
@@ -83,6 +82,7 @@ export class GUIRedisClient {
 	}
 
 	attachEvent() {
+		this.initReadline();
 		this.rl.on('line', (line) => {
 			this.handleInput(line);
 		}).on('close', () => {
@@ -205,6 +205,12 @@ export class GUIRedisClient {
 		}
 
 		return this.defaultClient;
+	}
+
+	shutdown() {
+		Object.entries(this.clusters).forEach(([name, client]) => {
+			client.quit();
+		});
 	}
 }
 
