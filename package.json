@@ -1,11 +1,10 @@
 {
   "name": "redis-cli",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "A Redis Cli Tool",
   "main": "index.js",
   "scripts": {
-    "build": "babel src -d lib",
-    "start": "node index.js",
+    "build": "tsc",
     "test": "jest --ci --reporters=default --reporters=\"jest-junit\""
   },
   "keywords": [
@@ -39,6 +38,7 @@
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.6",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-typescript": "^7.9.0",
     "@types/bluebird": "^3.5.32",

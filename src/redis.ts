@@ -5,7 +5,6 @@ import { BaseExecutor, ConsumerFunc, Left, Right, RedirectError, RequestEnd, Res
 const s = require('redis-splitargs');
 import { red, green, yellow } from 'colors';
 import { InputBuffer } from './buf';
-import { command } from 'yargs';
 
 class PromptResult { }
 class ExitResult {

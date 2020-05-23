@@ -93,6 +93,12 @@ jobs:
       - image: circleci/redis:5.0.3-alpine
     steps:
       - test-nodejs
+  node-v12:
+    docker:
+      - image: node:12
+      - image: circleci/redis:5.0.3-alpine
+    steps:
+      - test-nodejs
 
 workflows:
   node-multi-build:
@@ -100,3 +106,4 @@ workflows:
       - node-v6
       - node-v8
       - node-v10
+      - node-v12

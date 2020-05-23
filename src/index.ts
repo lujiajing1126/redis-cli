@@ -77,8 +77,8 @@ if (mode.toLowerCase() == 'redis') {
 		redisClient = new GUIRedisClient({ host: cli.h, port: cli.p, auth: cli.a, cluster });
 	}
 	if (cli._ && cli._.length > 0) {
-		redisClient.execute(cli._, () => {
-			// TODO: quit?
+		redisClient.execute(cli._, (result) => {
+			redisClient.responseCallback(result);
 		});
 	} else {
 		redisClient.attachEvent();
