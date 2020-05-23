@@ -19,6 +19,9 @@ commands:
           name: Install dependencies
           command: npm ci
       - run:
+          name: Compile typescript
+          command: npm run build
+      - run:
           name: Codecov
           command: npm i -g codecov
       - run:
@@ -46,6 +49,9 @@ commands:
       - run:
           name: Install dependencies
           command: npm install
+      - run:
+        name: Compile typescript
+        command: npm run build
       - run:
           name: Codecov
           command: npm i -g codecov
