@@ -1,5 +1,6 @@
 import { ReplyError, RedisClient } from "redis";
 import { format } from 'util';
+require("core-js/stable/array/flat");
 
 const INT_PREFIX = "(integer)";
 const BLOCKING_CMDS = ["subscribe", "monitor", "psubscribe"];
