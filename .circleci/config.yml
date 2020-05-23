@@ -50,8 +50,8 @@ commands:
           name: Install dependencies
           command: npm install
       - run:
-        name: Compile typescript
-        command: npm run build
+          name: Compile typescript
+          command: npm run build
       - run:
           name: Codecov
           command: npm i -g codecov
