@@ -4,6 +4,7 @@
   "description": "A Redis Cli Tool",
   "main": "index.js",
   "scripts": {
+    "build": "babel src -d lib",
     "start": "node index.js",
     "test": "jest --ci --reporters=default --reporters=\"jest-junit\""
   },
@@ -30,15 +31,24 @@
   "dependencies": {
     "bluebird": "^3.7.2",
     "colors": "^1.4.0",
-    "commander": "^5.1.0",
     "core-js": "^3.6.5",
     "redis": "^3.0.2",
-    "splitargs": "0.0.7"
+    "redis-splitargs": "^1.0.1",
+    "yargs": "^15.3.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/preset-typescript": "^7.9.0",
+    "@types/bluebird": "^3.5.32",
+    "@types/jest": "^25.2.3",
+    "@types/redis": "^2.8.21",
+    "@types/yargs": "^15.0.5",
+    "babel-jest": "^26.0.1",
     "jest": "^26.0.1",
     "jest-junit": "^10.0.0",
-    "mockery": "^2.1.0"
+    "typescript": "^3.9.3"
   },
   "repository": {
     "type": "git",
