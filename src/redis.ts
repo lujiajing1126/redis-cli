@@ -23,6 +23,7 @@ interface GUIRedisClientOption {
 	host: string
 	port?: number
 	auth?: string
+	cluster: boolean
 }
 
 export class GUIRedisClient {
@@ -32,6 +33,7 @@ export class GUIRedisClient {
 
 	private readonly defaultNodeName: string
 	private executor: BaseExecutor
+	private clusterMode: boolean
 
 	constructor(opt: GUIRedisClientOption) {
 		this.clusters = {};
@@ -49,6 +51,7 @@ export class GUIRedisClient {
 		if (opt.auth) {
 			this.defaultClient.auth(opt.auth);
 		}
+		this.clusterMode = opt.cluster;
 
 		this.attachRedisEvent(this.defaultClient);
 		this.initReadline();
@@ -127,11 +130,16 @@ export class GUIRedisClient {
 			if (result.left instanceof RequestEnd) {
 				this.next = __PR__;
 			} else if (result.left instanceof RedirectError) {
-				let endpoint = result.left.hostAndPort;
-				let key = result.left.key;
-				let newClient = this.getOrCreateClient(key, endpoint);
-				this.next = yellow(result.left.message);
-				this.execute(result.left.commands, this.responseCallback, newClient);
+				if (this.clusterMode) {
+					let endpoint = result.left.hostAndPort;
+					let key = result.left.key;
+					let newClient = this.getOrCreateClient(key, endpoint);
+					this.next = yellow(result.left.message);
+					this.execute(result.left.commands, this.responseCallback, newClient);
+				} else {
+					this.next = red(`MOVED slot=${result.left.slot} node=${result.left.hostAndPort}`);
+					this.next = __PR__;
+				}
 			} else {
 				this.next = red((result as Left<Error>).left.message);
 				this.next = __PR__;

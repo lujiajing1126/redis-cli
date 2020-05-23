@@ -69,12 +69,12 @@ const cluster = cli.c;
 if (mode.toLowerCase() == 'redis') {
 	let redisClient: GUIRedisClient;
 	if (cli.s !== undefined) {
-		redisClient = new GUIRedisClient({ host: cli.s });
+		redisClient = new GUIRedisClient({ host: cli.s, cluster});
 	} else if (cli.u !== undefined) {
 		let uri = new URL(cli.u);
-		redisClient = new GUIRedisClient({ host: uri.hostname, port: parseInt(uri.port), auth: uri.password });
+		redisClient = new GUIRedisClient({ host: uri.hostname, port: parseInt(uri.port), auth: uri.password, cluster });
 	} else {
-		redisClient = new GUIRedisClient({ host: cli.h, port: cli.p, auth: cli.a });
+		redisClient = new GUIRedisClient({ host: cli.h, port: cli.p, auth: cli.a, cluster });
 	}
 	if (cli._ && cli._.length > 0) {
 		redisClient.execute(cli._, () => {
