@@ -84,25 +84,25 @@ jobs:
   node-v8:
     docker:
       - image: node:8
-      - image: circleci/redis:5.0.3-alpine
+      - image: circleci/redis:6.0.4-alpine3.11
     steps:
       - test-nodejs
   node-v10:
     docker:
       - image: node:10
-      - image: circleci/redis:5.0.3-alpine
+      - image: circleci/redis:6.0.4-alpine3.11
     steps:
       - test-nodejs
   node-v12:
     docker:
       - image: node:12
-      - image: circleci/redis:5.0.3-alpine
+      - image: circleci/redis:6.0.4-alpine3.11
     steps:
       - test-nodejs
   node-v14:
     docker:
       - image: node:14
-      - image: circleci/redis:5.0.3-alpine
+      - image: circleci/redis:6.0.4-alpine3.11
     steps:
       - test-nodejs
 
