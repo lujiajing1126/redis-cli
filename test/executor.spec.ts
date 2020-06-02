@@ -24,7 +24,7 @@ const prepareClient = (): RedisClient => {
 
 beforeAll((done) => {
     redisClient = prepareClient();
-    return redisClient.flushall(() => {
+    redisClient.flushall(() => {
         done();
     });
 });
