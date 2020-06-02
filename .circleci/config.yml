@@ -19,6 +19,9 @@ commands:
           name: Install dependencies
           command: npm ci
       - run:
+          name: Compile typescript
+          command: npm run build
+      - run:
           name: Codecov
           command: npm i -g codecov
       - run:
@@ -46,6 +49,9 @@ commands:
       - run:
           name: Install dependencies
           command: npm install
+      - run:
+          name: Compile typescript
+          command: npm run build
       - run:
           name: Codecov
           command: npm i -g codecov
@@ -75,28 +81,35 @@ commands:
 
 
 jobs:
-  node-v6:
-    docker:
-      - image: node:6
-      - image: circleci/redis:5.0.3-alpine
-    steps:
-      - test-nodejs-v6
   node-v8:
     docker:
       - image: node:8
-      - image: circleci/redis:5.0.3-alpine
+      - image: circleci/redis:6.0.4-alpine3.11
     steps:
       - test-nodejs
   node-v10:
     docker:
       - image: node:10
-      - image: circleci/redis:5.0.3-alpine
+      - image: circleci/redis:6.0.4-alpine3.11
+    steps:
+      - test-nodejs
+  node-v12:
+    docker:
+      - image: node:12
+      - image: circleci/redis:6.0.4-alpine3.11
+    steps:
+      - test-nodejs
+  node-v14:
+    docker:
+      - image: node:14
+      - image: circleci/redis:6.0.4-alpine3.11
     steps:
       - test-nodejs
 
 workflows:
   node-multi-build:
     jobs:
-      - node-v6
       - node-v8
       - node-v10
+      - node-v12
+      - node-v14

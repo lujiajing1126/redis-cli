@@ -1,10 +1,10 @@
 {
   "name": "redis-cli",
-  "version": "1.4.0",
+  "version": "2.0.0-alpha.3",
   "description": "A Redis Cli Tool",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "build": "tsc",
     "test": "jest --ci --reporters=default --reporters=\"jest-junit\""
   },
   "keywords": [
@@ -13,6 +13,9 @@
   ],
   "bin": {
     "rdcli": "./bin/rdcli"
+  },
+  "engines": {
+    "node": ">=8"
   },
   "preferGlobal": true,
   "author": {
@@ -30,15 +33,19 @@
   "dependencies": {
     "bluebird": "^3.7.2",
     "colors": "^1.4.0",
-    "commander": "^4.0.1",
-    "core-js": "^3.4.7",
-    "redis": "^2.8.0",
-    "splitargs": "0.0.7"
+    "core-js": "^3.6.5",
+    "redis": "^3.0.2",
+    "redis-splitargs": "^1.0.1",
+    "yargs": "^15.3.1"
   },
   "devDependencies": {
-    "jest": "^24.9.0",
+    "@types/bluebird": "^3.5.32",
+    "@types/jest": "^25.2.3",
+    "@types/redis": "^2.8.21",
+    "@types/yargs": "^15.0.5",
+    "jest": "^25.5.4",
     "jest-junit": "^10.0.0",
-    "mockery": "^2.1.0"
+    "typescript": "^3.9.3"
   },
   "repository": {
     "type": "git",
