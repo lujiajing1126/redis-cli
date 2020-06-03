@@ -129,3 +129,21 @@ test("GET key in cluster and return RedirectError", async () => {
     expect((mockCallback.mock.calls[0][0] as Left<RedirectError>).left.slot).toBe(10000);
     expect((mockCallback.mock.calls[0][0] as Left<RedirectError>).left.hostAndPort).toBe("127.0.0.1:9900");
 });
+
+test("XADD and XRANGE", async () => {
+    let executorXADD = new BaseExecutor(redisClient, ["XADD", "mystream", `1000-0`, "name", "Sara", "surname", "OConnor"]);
+    const mockCallback: jest.Mock<void, Result<Error, string | string[]>[]> = jest.fn();
+    await executorXADD.run(mockCallback);
+    expect(mockCallback.mock.calls.length).toBe(2);
+    expect(mockCallback.mock.calls[0][0]._kind).toBe('Right');
+    expect((mockCallback.mock.calls[0][0] as Right<string>).right).toBe("1000-0");
+    expect(mockCallback.mock.calls[1][0]._kind).toBe('Left');
+    expect((mockCallback.mock.calls[1][0] as Left<Error>).left.name).toBe("RequestEnd");
+    let executorXRANGE = new BaseExecutor(redisClient, ["XRANGE", "mystream", "-", "+"]);
+    await executorXRANGE.run(mockCallback);
+    expect(mockCallback.mock.calls.length).toBe(4);
+    expect(mockCallback.mock.calls[2][0]._kind).toBe('Right');
+    expect((mockCallback.mock.calls[2][0] as Right<string>).right).toStrictEqual(["1) 1) 1000-0", "   2) 1) \"name\"", "      2) \"Sara\"", "      3) \"surname\"", "      4) \"OConnor\""]);
+    expect(mockCallback.mock.calls[3][0]._kind).toBe('Left');
+    expect((mockCallback.mock.calls[3][0] as Left<Error>).left.name).toBe("RequestEnd");
+});

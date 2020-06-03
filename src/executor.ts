@@ -43,7 +43,7 @@ export class ExecutorError extends Error {
 export class RedirectError extends ExecutorError {
     readonly hostAndPort: string
     readonly slot: number
-    readonly commands: string[] 
+    readonly commands: string[]
     readonly key?: string
 
     constructor(commands: string[], slot: number, hostAndPort: string, key?: string) {
@@ -98,13 +98,29 @@ export class BaseExecutor implements Executor {
 
     writeResult(result: any): string | string[] {
         if (Array.isArray(result)) {
-            return result.map((item, index) => {
-                return format("%d) %s", index + 1, item);
-            });
+            return result.map((item, idx) => {
+                if (Array.isArray(item)) {
+                    return item.map((elem: string | string[], jdx) => {
+                        if (jdx === 0) {
+                            return format(`%d) %d) %s`, idx + 1, jdx + 1, elem);
+                        } else {
+                            return (elem as string[]).map((val, kdx) => {
+                                if (kdx == 0) {
+                                    return format(`   %d) %d) "%s"`, jdx + 1, kdx + 1, val);
+                                } else {
+                                    return format(`      %d) "%s"`, kdx + 1, val);
+                                }
+                            });
+                        }
+                    }).flat();
+                } else {
+                    return format("%d) %s", idx + 1, item);
+                }
+            }).flat();
         } else if (result === null) {
             return "(nil)";
         } else if (typeof result === 'object') {
-            return Object.entries(result as {[key: string]: string}).flat().map((item, index) => {
+            return Object.entries(result as { [key: string]: string }).flat().map((item, index) => {
                 return `${index + 1}) "${item}"`;
             });
         } else {
@@ -162,7 +178,7 @@ export class SubscribeExecutor extends BaseExecutor {
 
     async run(callback: ConsumerFunc): Promise<void> {
         if (this.cmd === "subscribe") {
-            this.client.on("subscribe", (_channel, _count) => {});
+            this.client.on("subscribe", (_channel, _count) => { });
 
             this.client.on("message", (_channel, message) => {
                 callback(right(this.writeResult(message)));
@@ -182,7 +198,7 @@ export class PatternSubscribeExecutor extends SubscribeExecutor {
     }
 
     async run(callback: ConsumerFunc): Promise<void> {
-        this.client.on("psubscribe", (_pattern, _count) => {});
+        this.client.on("psubscribe", (_pattern, _count) => { });
 
         this.client.on("pmessage", (_pattern, _channel, message) => {
             callback(right(this.writeResult(message)));
