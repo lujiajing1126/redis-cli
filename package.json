@@ -1,6 +1,6 @@
 {
   "name": "redis-cli",
-  "version": "2.0.0-alpha.4",
+  "version": "2.0.0",
   "description": "A Redis Cli Tool",
   "main": "index.js",
   "scripts": {
@@ -36,16 +36,16 @@
     "core-js": "^3.6.5",
     "redis": "^3.0.2",
     "redis-splitargs": "^1.0.1",
-    "yargs": "^15.3.1"
+    "yargs": "^15.4.1"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.32",
-    "@types/jest": "^25.2.3",
-    "@types/redis": "^2.8.22",
+    "@types/jest": "^26.0.10",
+    "@types/redis": "^2.8.26",
     "@types/yargs": "^15.0.5",
-    "jest": "^25.5.4",
-    "jest-junit": "^10.0.0",
-    "typescript": "^3.9.3"
+    "jest": "^26.4.2",
+    "jest-junit": "^11.1.0",
+    "typescript": "^4.0.2"
   },
   "repository": {
     "type": "git",
