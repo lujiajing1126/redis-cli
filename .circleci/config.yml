@@ -81,12 +81,6 @@ commands:
 
 
 jobs:
-  node-v8:
-    docker:
-      - image: node:8
-      - image: circleci/redis:6.0.4-alpine3.11
-    steps:
-      - test-nodejs
   node-v10:
     docker:
       - image: node:10
@@ -109,7 +103,6 @@ jobs:
 workflows:
   node-multi-build:
     jobs:
-      - node-v8
       - node-v10
       - node-v12
       - node-v14
