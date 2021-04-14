@@ -108,7 +108,7 @@ describe('readline tests', () => {
             setTimeout(() => {
                 expect(inputHandler).toHaveBeenLastCalledWith("get unknownkey");
                 inputHandler.mockRestore();
-                resolve();
+                resolve(null);
             }, 1000);
         });
     });

@@ -1,4 +1,4 @@
-import { version, option, usage, number } from 'yargs';
+import { version, parserConfiguration } from 'yargs';
 import { URL } from 'url';
 import { GUIRedisClient } from './redis';
 import { version as versionNumber } from '../package.json';
@@ -14,7 +14,7 @@ interface RedisGUIArguments {
 	u: string | undefined;
 	m: "redis";
 	c: boolean;
-	_: string[];
+	_: (number|string)[];
 	$0: string;
 }
 
@@ -68,6 +68,10 @@ const cli: RedisGUIArguments = version(versionNumber)
 const mode = cli.m;
 const cluster = cli.c;
 
+const tranformFromNumberToString = (arr: (number|string)[]) : string[] => {
+	return arr.map((item) => item + "")
+}
+
 if (mode.toLowerCase() == 'redis') {
 	let redisClient: GUIRedisClient;
 	if (cli.s !== undefined) {
@@ -107,7 +111,7 @@ if (mode.toLowerCase() == 'redis') {
 				}
 			}
 		}
-		redisClient.execute(cli._, callback).then(() => {
+		redisClient.execute(tranformFromNumberToString(cli._), callback).then(() => {
 			redisClient.shutdown();
 		});
 	} else {
