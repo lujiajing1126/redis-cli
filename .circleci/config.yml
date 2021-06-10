@@ -79,7 +79,6 @@ commands:
           paths:
             - ~/.npm/_cacache
 
-
 jobs:
   node-v10:
     docker:
@@ -99,6 +98,12 @@ jobs:
       - image: circleci/redis:6.0.4-alpine3.11
     steps:
       - test-nodejs
+  node-v16:
+    docker:
+      - image: node:16
+      - image: circleci/redis:6.0.4-alpine3.11
+    steps:
+      - test-nodejs
 
 workflows:
   node-multi-build:
@@ -106,3 +111,4 @@ workflows:
       - node-v10
       - node-v12
       - node-v14
+      - node-v16
