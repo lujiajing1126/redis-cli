@@ -1,4 +1,4 @@
-import { version, parserConfiguration } from 'yargs';
+import { default as yargs } from 'yargs';
 import { URL } from 'url';
 import { GUIRedisClient } from './redis';
 import { version as versionNumber } from '../package.json';
@@ -6,14 +6,15 @@ import { RequestEnd, RedirectError, Left, Right, Result } from './executor';
 import { yellow, red, green } from 'colors';
 
 interface RedisGUIArguments {
-	[x: string]: unknown
-	h: string;
-	p: number;
-	s: string | undefined;
-	a: string | undefined;
+	[x: string]: unknown;
+	host: string;
+	port: number;
+	socket: string | undefined;
+	auth: string | undefined;
 	u: string | undefined;
-	m: "redis";
-	c: boolean;
+	mode: "redis";
+	cluster: boolean;
+	tls: boolean;
 	_: (number|string)[];
 	$0: string;
 }
@@ -21,52 +22,58 @@ interface RedisGUIArguments {
 type Mode = 'redis';
 const modes: ReadonlyArray<Mode> = ['redis'];
 
-const cli: RedisGUIArguments = version(versionNumber)
+const cli: RedisGUIArguments = yargs(process.argv.slice(2))
+	.version(versionNumber)
 	.usage("$0 [OPTIONS] [cmd [arg [arg ...]]]")
 	.options({
-		"h": {
-			alias: "host",
+		"host": {
+			alias: "h",
 			default: "127.0.0.1",
 			describe: 'Server hostname (default: 127.0.0.1).',
 			type: 'string'
 		},
-		"p": {
-			alias: "port",
+		"port": {
+			alias: "p",
 			default: 6379,
 			describe: "Server port (default: 6379).",
 			type: 'number',
 		},
-		"s": {
-			alias: "socket",
+		"socket": {
+			alias: "s",
 			describe: "Server socket (overrides hostname and port).",
 			type: 'string'
 		},
-		"a": {
-			alias: "auth",
+		"auth": {
+			alias: "a",
 			describe: "Server password.",
 			type: 'string'
 		},
 		"u": {
-			alias: "uri",
 			describe: "Server URI.",
 			type: 'string'
 		},
-		"m": {
-			alias: "mode",
+		"mode": {
+			alias: "m",
 			describe: "Server Type, only redis available now.",
 			choices: modes,
 			default: modes[0]
 		},
-		"c": {
-			alias: "cluster",
+		"cluster": {
+			alias: "c",
 			describe: "Enable cluster mode (follow -ASK and -MOVED redirections).",
 			boolean: true,
 			default: false
+		},
+		"tls": {
+			describe: "Establish a secure TLS connection.",
+			type: 'boolean',
+			default: false
 		}
-	}).argv;
+	}).parseSync();
 
-const mode = cli.m;
-const cluster = cli.c;
+const mode = cli.mode;
+const cluster = cli.cluster;
+const tls = cli.tls;
 
 const tranformFromNumberToString = (arr: (number|string)[]) : string[] => {
 	return arr.map((item) => item + "")
@@ -75,12 +82,12 @@ const tranformFromNumberToString = (arr: (number|string)[]) : string[] => {
 if (mode.toLowerCase() == 'redis') {
 	let redisClient: GUIRedisClient;
 	if (cli.s !== undefined) {
-		redisClient = new GUIRedisClient({ host: cli.s, cluster });
+		redisClient = new GUIRedisClient({ host: cli.socket, cluster, tls});
 	} else if (cli.u !== undefined) {
 		let uri = new URL(cli.u);
-		redisClient = new GUIRedisClient({ host: uri.hostname, port: parseInt(uri.port), auth: uri.password, cluster });
+		redisClient = new GUIRedisClient({ host: uri.hostname, port: parseInt(uri.port), auth: uri.password, cluster, tls});
 	} else {
-		redisClient = new GUIRedisClient({ host: cli.h, port: cli.p, auth: cli.a, cluster });
+		redisClient = new GUIRedisClient({ host: cli.host, port: cli.port, auth: cli.auth, cluster, tls});
 	}
 	if (cli._ && cli._.length > 0) {
 		const callback = (result: Result<Error, string | string[]>) => {

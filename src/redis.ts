@@ -1,4 +1,4 @@
-import { RedisClient, createClient } from 'redis';
+import { RedisClient, createClient, ClientOpts } from 'redis';
 import { createInterface, Interface, cursorTo, clearScreenDown } from 'readline';
 import { promisifyAll } from 'bluebird';
 import { BaseExecutor, ConsumerFunc, Left, Right, RedirectError, RequestEnd, Result } from './executor';
@@ -25,6 +25,7 @@ interface GUIRedisClientOption {
 	port?: number
 	auth?: string
 	cluster: boolean
+	tls: boolean
 }
 
 export class GUIRedisClient {
@@ -35,6 +36,7 @@ export class GUIRedisClient {
 	private readonly defaultNodeName: string
 	private executor: BaseExecutor
 	private clusterMode: boolean
+	private tlsMode: boolean
 
 	constructor(opt: GUIRedisClientOption) {
 		this.clusters = {};
@@ -47,7 +49,9 @@ export class GUIRedisClient {
 			this.defaultNodeName = `${opt.host}:${opt.port}`;
 		}
 
-		this.clusters[this.defaultNodeName] = GUIRedisClient.createRedisClient(this.defaultNodeName);
+		this.tlsMode = opt.tls;
+
+		this.clusters[this.defaultNodeName] = this.createRedisClient(this.defaultNodeName);
 
 		if (opt.auth) {
 			this.defaultClient.auth(opt.auth);
@@ -171,16 +175,9 @@ export class GUIRedisClient {
 		return this.clusters[this.defaultNodeName]
 	}
 
-	static createRedisClient(connectionUrl: string): RedisClient {
-		let client = undefined;
-		let colonPos = connectionUrl.indexOf(":");
-		if (colonPos >= 0) {
-			let port = parseInt(connectionUrl.substr(colonPos + 1));
-			let host = connectionUrl.substr(0, colonPos);
-			client = createClient(port, host);
-		} else {
-			client = createClient(connectionUrl);
-		}
+	createRedisClient(redis_url: string): RedisClient {
+		const protocol = this.tlsMode ? "rediss://" : "redis://"
+		let client = createClient(protocol + redis_url);
 		promisifyAll(client);
 		return client;
 	}
@@ -191,7 +188,7 @@ export class GUIRedisClient {
 				if (key !== undefined) this.keyLocationCache[key] = server;
 				return this.clusters[server];
 			}
-			let client = GUIRedisClient.createRedisClient(server);
+			let client = this.createRedisClient(server);
 			client.removeAllListeners();
 			client.unref();
 			if (key !== undefined) {

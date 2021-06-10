@@ -14,7 +14,7 @@ let spy = {
 let gui: GUIRedisClient;
 
 beforeAll((done) => {
-    gui = new GUIRedisClient({ port: 6379, host: "127.0.0.1", cluster: false })
+    gui = new GUIRedisClient({ port: 6379, host: "127.0.0.1", cluster: false, tls: false })
     spy.next = jest.spyOn(gui, 'next', 'set').mockImplementation(() => { });
     spy.exit = jest.spyOn(process, 'exit').mockImplementation();
     gui.execute(['flushall'], () => {
