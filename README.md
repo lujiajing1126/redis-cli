@@ -24,6 +24,27 @@ $ rdcli -c
 // works in cluster mode, which will follow cluster redirection
 ```
 
+
+```
+$ rdcli --help
+rdcli [OPTIONS] [cmd [arg [arg ...]]]
+
+Options:
+      --help     Show help                                             [boolean]
+      --version  Show version number                                   [boolean]
+  -h, --host     Server hostname (default: 127.0.0.1).
+                                                 [string] [default: "127.0.0.1"]
+  -p, --port     Server port (default: 6379).           [number] [default: 6379]
+  -s, --socket   Server socket (overrides hostname and port).           [string]
+  -a, --auth     Server password.                                       [string]
+  -u             Server URI.                                            [string]
+  -m, --mode     Server Type, only redis available now.
+                                           [choices: "redis"] [default: "redis"]
+  -c, --cluster  Enable cluster mode (follow -ASK and -MOVED redirections).
+                                                      [boolean] [default: false]
+      --tls      Establish a secure TLS connection.   [boolean] [default: false]
+```
+
 ## Roadmap
 - more available cli params like official redis-cli
 - handle cluster-like redis (PaaS) which do not support **ALL** CMD
