@@ -54,7 +54,6 @@ export class GUIRedisClient {
 		this.auth = opt.auth;
 
 		this.clusters[this.defaultNodeName] = this.createRedisClient(this.defaultNodeName);
-
 		this.clusterMode = opt.cluster;
 
 		this.attachRedisEvent(this.defaultClient);
