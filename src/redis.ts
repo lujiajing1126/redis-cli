@@ -51,13 +51,10 @@ export class GUIRedisClient {
 		}
 
 		this.tlsMode = opt.tls;
+		this.auth = opt.auth;
 
 		this.clusters[this.defaultNodeName] = this.createRedisClient(this.defaultNodeName);
 
-		if (opt.auth) {
-			this.defaultClient.auth(opt.auth);
-			this.auth = opt.auth;
-		}
 		this.clusterMode = opt.cluster;
 
 		this.attachRedisEvent(this.defaultClient);
@@ -180,9 +177,7 @@ export class GUIRedisClient {
 	createRedisClient(redis_url: string): RedisClient {
 		const protocol = this.tlsMode ? "rediss://" : "redis://"
 		let client = createClient(protocol + redis_url);
-		if (this.auth) {
-			client.auth(this.auth);
-		}
+		if (this.auth) client.auth(this.auth);
 		promisifyAll(client);
 		return client;
 	}
