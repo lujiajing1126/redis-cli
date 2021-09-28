@@ -180,6 +180,9 @@ export class GUIRedisClient {
 	createRedisClient(redis_url: string): RedisClient {
 		const protocol = this.tlsMode ? "rediss://" : "redis://"
 		let client = createClient(protocol + redis_url);
+		if (this.auth) {
+			client.auth(this.auth);
+		}
 		promisifyAll(client);
 		return client;
 	}
@@ -191,9 +194,6 @@ export class GUIRedisClient {
 				return this.clusters[server];
 			}
 			let client = this.createRedisClient(server);
-			if (this.auth) {
-				client.auth(this.auth);
-			}
 			client.removeAllListeners();
 			client.unref();
 			if (key !== undefined) {
