@@ -37,6 +37,7 @@ export class GUIRedisClient {
 	private executor: BaseExecutor
 	private clusterMode: boolean
 	private tlsMode: boolean
+	private auth: string
 
 	constructor(opt: GUIRedisClientOption) {
 		this.clusters = {};
@@ -55,6 +56,7 @@ export class GUIRedisClient {
 
 		if (opt.auth) {
 			this.defaultClient.auth(opt.auth);
+			this.auth = opt.auth;
 		}
 		this.clusterMode = opt.cluster;
 
@@ -189,6 +191,9 @@ export class GUIRedisClient {
 				return this.clusters[server];
 			}
 			let client = this.createRedisClient(server);
+			if (this.auth) {
+				client.auth(this.auth);
+			}
 			client.removeAllListeners();
 			client.unref();
 			if (key !== undefined) {
