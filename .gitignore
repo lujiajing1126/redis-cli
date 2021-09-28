@@ -8,3 +8,4 @@ junit.xml
 .DS_Store
 .vscode
 lib
+.idea
