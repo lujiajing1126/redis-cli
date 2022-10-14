@@ -6,6 +6,8 @@ import {
     GenericContainer,
     Wait
 } from "testcontainers";
+import { expect, jest, beforeAll, afterAll, test } from '@jest/globals';
+import { Mock } from 'jest-mock';
 
 let container: StartedTestContainer;
 
@@ -48,7 +50,7 @@ afterAll(async () => {
 
 test("GET key before set", async () => {
     let executor = new BaseExecutor(redisClient, ["get", "key"]);
-    const mockCallback: jest.Mock<void, Result<Error, string | string[]>[]> = jest.fn();
+    const mockCallback: Mock<void, Result<Error, string | string[]>[]> = jest.fn();
     await executor.run(mockCallback);
     expect(mockCallback.mock.calls.length).toBe(2);
     expect(mockCallback.mock.calls[0][0]._kind).toBe('Right');
@@ -59,7 +61,7 @@ test("GET key before set", async () => {
 
 test("SET key", async () => {
     let executor = new BaseExecutor(redisClient, ["set", "key", "value"]);
-    const mockCallback: jest.Mock<void, Result<Error, string | string[]>[]> = jest.fn();
+    const mockCallback: Mock<void, Result<Error, string | string[]>[]> = jest.fn();
     await executor.run(mockCallback);
     expect(mockCallback.mock.calls.length).toBe(2);
     expect(mockCallback.mock.calls[0][0]._kind).toBe('Right');
@@ -70,7 +72,7 @@ test("SET key", async () => {
 
 test("GET key after set", async () => {
     let executor = new BaseExecutor(redisClient, ["get", "key"]);
-    const mockCallback: jest.Mock<void, Result<Error, string | string[]>[]> = jest.fn();
+    const mockCallback: Mock<void, Result<Error, string | string[]>[]> = jest.fn();
     await executor.run(mockCallback);
     expect(mockCallback.mock.calls.length).toBe(2);
     expect(mockCallback.mock.calls[0][0]._kind).toBe('Right');
@@ -82,7 +84,7 @@ test("GET key after set", async () => {
 test("SUBSCRIBE channel", async () => {
     let subClient = prepareClient(container.getMappedPort(6379));
     let executor = new SubscribeExecutor(subClient, ["subscribe", "channel"]);
-    const mockCallback: jest.Mock<void, Result<Error, string | string[]>[]> = jest.fn();
+    const mockCallback: Mock<void, Result<Error, string | string[]>[]> = jest.fn();
     await executor.run(mockCallback);
     let pushlishExec = new BaseExecutor(redisClient, ["publish", "channel", "value"]);
     await pushlishExec.run(() => {});
@@ -97,7 +99,7 @@ test("SUBSCRIBE channel", async () => {
 test("PSUBSCRIBE channel", async () => {
     let psubClient = prepareClient(container.getMappedPort(6379));
     let executor = new PatternSubscribeExecutor(psubClient, ["psubscribe", "ch?nnel"]);
-    const mockCallback: jest.Mock<void, Result<Error, string | string[]>[]> = jest.fn();
+    const mockCallback: Mock<void, Result<Error, string | string[]>[]> = jest.fn();
     await executor.run(mockCallback);
     let pushlishExec = new BaseExecutor(redisClient, ["publish", "channel", "value"]);
     await pushlishExec.run(() => {});
@@ -111,7 +113,7 @@ test("PSUBSCRIBE channel", async () => {
 
 test("HSET and HGETALL", async () => {
     let executorHSET = new BaseExecutor(redisClient, ["HSET", "myhash", "field", "Hello"]);
-    const mockCallback: jest.Mock<void, Result<Error, string | string[]>[]> = jest.fn();
+    const mockCallback: Mock<void, Result<Error, string | string[]>[]> = jest.fn();
     await executorHSET.run(mockCallback);
     expect(mockCallback.mock.calls.length).toBe(2);
     expect(mockCallback.mock.calls[0][0]._kind).toBe('Right');
@@ -134,7 +136,7 @@ test("GET key in cluster and return RedirectError", async () => {
         throw err;
     });
     let executor = new BaseExecutor(redisClient, ["get", "key"]);
-    const mockCallback: jest.Mock<void, Result<Error, string | string[]>[]> = jest.fn();
+    const mockCallback: Mock<void, Result<Error, string | string[]>[]> = jest.fn();
     await executor.run(mockCallback);
     expect(mockCallback.mock.calls.length).toBe(1);
     expect(mockCallback.mock.calls[0][0]._kind).toBe('Left');
@@ -145,7 +147,7 @@ test("GET key in cluster and return RedirectError", async () => {
 
 test("XADD and XRANGE", async () => {
     let executorXADD = new BaseExecutor(redisClient, ["XADD", "mystream", `1000-0`, "name", "Sara", "surname", "OConnor"]);
-    const mockCallback: jest.Mock<void, Result<Error, string | string[]>[]> = jest.fn();
+    const mockCallback: Mock<void, Result<Error, string | string[]>[]> = jest.fn();
     await executorXADD.run(mockCallback);
     expect(mockCallback.mock.calls.length).toBe(2);
     expect(mockCallback.mock.calls[0][0]._kind).toBe('Right');

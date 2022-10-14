@@ -1,6 +1,7 @@
 /**
  * Integration tests for Redis-CLI
  */
+import { expect, jest, beforeAll, afterAll, describe, it} from '@jest/globals';
 import { GUIRedisClient, __PR__ } from '../src/redis';
 import { red, yellow, green } from 'colors';
 const readline = require('readline');
@@ -10,11 +11,14 @@ import {
     GenericContainer,
     Wait
 } from "testcontainers";
+import { SpyInstance } from 'jest-mock';
 
-let spy = {
-    next: undefined,
-    exit: undefined
+type Mocks = {
+    next: SpyInstance,
+    exit: SpyInstance
 };
+
+let spy: Mocks
 
 let gui: GUIRedisClient;
 let container: StartedTestContainer;

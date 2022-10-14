@@ -1,4 +1,5 @@
 import { InputBuffer } from '../src/buf';
+import { expect, test} from '@jest/globals';
 
 test('string without backslash', () => {
     let buf = new InputBuffer("abc");
