@@ -5,6 +5,11 @@ import { GUIRedisClient, __PR__ } from '../src/redis';
 import { red, yellow, green } from 'colors';
 const readline = require('readline');
 const _log = global.console.log;
+import {
+    StartedTestContainer,
+    GenericContainer,
+    Wait
+} from "testcontainers";
 
 let spy = {
     next: undefined,
@@ -12,17 +17,26 @@ let spy = {
 };
 
 let gui: GUIRedisClient;
+let container: StartedTestContainer;
+
+jest.setTimeout(60000); // 1 minute
 
 beforeAll(async () => {
-    gui = new GUIRedisClient({ port: 6379, host: "127.0.0.1", cluster: false, tls: false })
+    container = await new GenericContainer("redis:7.0.5")
+        .withExposedPorts(6379)
+        .withWaitStrategy(Wait.forLogMessage("Ready to accept connections"))
+        .start();
+
+    gui = new GUIRedisClient({ port: container.getMappedPort(6379), host: "127.0.0.1", cluster: false, tls: false })
     spy.next = jest.spyOn(gui, 'next', 'set').mockImplementation(() => { });
     spy.exit = jest.spyOn(process, 'exit').mockImplementation();
-    await gui.execute(['flushall'], () => {});
+    await gui.execute(['flushall'], () => { });
 });
 
-afterAll(() => {
+afterAll(async () => {
     gui.shutdown();
     spy.next.mockRestore();
+    await container.stop();
     spy.exit.mockRestore();
 });
 
@@ -78,7 +92,7 @@ describe('test third party modules', () => {
     it('without installing specific module', async () => {
         await gui.execute(["FT.SEARCH", "permits", 'car', "LIMIT", "0", "0"], gui.responseCallback);
         expect(spy.next).toHaveBeenCalled();
-        expect(spy.next.mock.calls[0][0]).toBe(red('(error) ERR unknown command `ft.search`, with args beginning with: `permits`, `car`, `LIMIT`, `0`, `0`, '));
+        expect(spy.next.mock.calls[0][0]).toBe(red("(error) ERR unknown command 'ft.search', with args beginning with: 'permits' 'car' 'LIMIT' '0' '0' "));
     });
 });
 
