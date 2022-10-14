@@ -1,6 +1,15 @@
 import { RedisClient, ReplyError } from "redis";
 import { BaseExecutor, Right, SubscribeExecutor, Result, Left, PatternSubscribeExecutor, RedirectError } from "../src/executor";
 import { promisifyAll } from 'bluebird';
+import {
+    StartedTestContainer,
+    GenericContainer,
+    Wait
+} from "testcontainers";
+
+let container: StartedTestContainer;
+
+jest.setTimeout(60000); // 1 minute
 
 let redisClient : RedisClient
 
@@ -8,8 +17,8 @@ const delay = (ms: number) => {
     return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
-const prepareClient = (): RedisClient => {
-    let redisClient = new RedisClient({port: 6379, host: "127.0.0.1"});
+const prepareClient = (port: number): RedisClient => {
+    let redisClient = new RedisClient({port: port, host: "127.0.0.1"});
     /**
      * Call unref() on the underlying socket connection to the Redis server, allowing the program to exit once no more commands are pending.
      * This is an experimental feature, as documented in the following site:
@@ -22,15 +31,19 @@ const prepareClient = (): RedisClient => {
     return redisClient;
 }
 
-beforeAll((done) => {
-    redisClient = prepareClient();
-    redisClient.flushall(() => {
-        done();
-    });
+beforeAll(async () => {
+    container = await new GenericContainer("redis:7.0.5")
+        .withExposedPorts(6379)
+        .withWaitStrategy(Wait.forLogMessage("Ready to accept connections"))
+        .start();
+    
+    redisClient = prepareClient(container.getMappedPort(6379));
+    redisClient.flushall();
 });
 
-afterAll(() => {
+afterAll(async () => {
     redisClient.quit();
+    await container.stop();
 });
 
 test("GET key before set", async () => {
@@ -67,7 +80,7 @@ test("GET key after set", async () => {
 });
 
 test("SUBSCRIBE channel", async () => {
-    let subClient = prepareClient();
+    let subClient = prepareClient(container.getMappedPort(6379));
     let executor = new SubscribeExecutor(subClient, ["subscribe", "channel"]);
     const mockCallback: jest.Mock<void, Result<Error, string | string[]>[]> = jest.fn();
     await executor.run(mockCallback);
@@ -82,7 +95,7 @@ test("SUBSCRIBE channel", async () => {
 });
 
 test("PSUBSCRIBE channel", async () => {
-    let psubClient = prepareClient();
+    let psubClient = prepareClient(container.getMappedPort(6379));
     let executor = new PatternSubscribeExecutor(psubClient, ["psubscribe", "ch?nnel"]);
     const mockCallback: jest.Mock<void, Result<Error, string | string[]>[]> = jest.fn();
     await executor.run(mockCallback);
