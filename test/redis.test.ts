@@ -92,7 +92,7 @@ describe('test third party modules', () => {
     it('without installing specific module', async () => {
         await gui.execute(["FT.SEARCH", "permits", 'car', "LIMIT", "0", "0"], gui.responseCallback);
         expect(spy.next).toHaveBeenCalled();
-        expect(spy.next.mock.calls[0][0]).toBe(red('(error) ERR unknown command `ft.search`, with args beginning with: `permits`, `car`, `LIMIT`, `0`, `0`, '));
+        expect(spy.next.mock.calls[0][0]).toBe(red("(error) ERR unknown command 'ft.search', with args beginning with: 'permits' 'car' 'LIMIT' '0' '0' "));
     });
 });
 
