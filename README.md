@@ -37,6 +37,7 @@ Options:
   -p, --port     Server port (default: 6379).           [number] [default: 6379]
   -s, --socket   Server socket (overrides hostname and port).           [string]
   -a, --auth     Server password.                                       [string]
+  -n             Database number                           [number] [default: 0]
   -u             Server URI.                                            [string]
   -m, --mode     Server Type, only redis available now.
                                            [choices: "redis"] [default: "redis"]

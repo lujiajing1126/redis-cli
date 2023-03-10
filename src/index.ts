@@ -12,6 +12,7 @@ interface RedisGUIArguments {
 	socket: string | undefined;
 	auth: string | undefined;
 	u: string | undefined;
+	n: number;
 	mode: "redis";
 	cluster: boolean;
 	tls: boolean;
@@ -52,6 +53,11 @@ const cli: RedisGUIArguments = yargs(process.argv.slice(2))
 			describe: "Server URI.",
 			type: 'string'
 		},
+		"n": {
+			default: 0,
+			describe: "Database number",
+			type: 'number'
+		},
 		"mode": {
 			alias: "m",
 			describe: "Server Type, only redis available now.",
@@ -82,12 +88,13 @@ const tranformFromNumberToString = (arr: (number|string)[]) : string[] => {
 if (mode.toLowerCase() == 'redis') {
 	let redisClient: GUIRedisClient;
 	if (cli.s !== undefined) {
-		redisClient = new GUIRedisClient({ host: cli.socket, cluster, tls});
+		redisClient = new GUIRedisClient({ host: cli.socket, cluster, tls, db: cli.n});
 	} else if (cli.u !== undefined) {
 		let uri = new URL(cli.u);
-		redisClient = new GUIRedisClient({ host: uri.hostname, port: parseInt(uri.port), auth: uri.password, cluster, tls});
+		const db = uri.pathname.length > 1 && parseInt(uri.pathname.slice(1)) || cli.n;
+		redisClient = new GUIRedisClient({ host: uri.hostname, port: parseInt(uri.port), auth: uri.password, cluster, tls, db});
 	} else {
-		redisClient = new GUIRedisClient({ host: cli.host, port: cli.port, auth: cli.auth, cluster, tls});
+		redisClient = new GUIRedisClient({ host: cli.host, port: cli.port, auth: cli.auth, cluster, tls, db: cli.n});
 	}
 	if (cli._ && cli._.length > 0) {
 		const callback = (result: Result<Error, string | string[]>) => {
