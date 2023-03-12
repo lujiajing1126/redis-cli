@@ -64,7 +64,11 @@ export class GUIRedisClient {
 
 	private initReadline() {
 		this.rl = createInterface(process.stdin, process.stdout);
-		this.rl.setPrompt(`${this.defaultNodeName}> `);
+		if (this.db == 0) {
+			this.rl.setPrompt(`${this.defaultNodeName}> `);
+		} else {
+			this.rl.setPrompt(`${this.defaultNodeName}[${this.db}]> `);
+		}
 		this.rl.prompt();
 	}
 
