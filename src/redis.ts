@@ -26,6 +26,7 @@ interface GUIRedisClientOption {
 	auth?: string
 	cluster: boolean
 	tls: boolean
+	db?: number;
 }
 
 export class GUIRedisClient {
@@ -38,6 +39,7 @@ export class GUIRedisClient {
 	private clusterMode: boolean
 	private tlsMode: boolean
 	private auth: string
+	private db: number;
 
 	constructor(opt: GUIRedisClientOption) {
 		this.clusters = {};
@@ -52,6 +54,7 @@ export class GUIRedisClient {
 
 		this.tlsMode = opt.tls;
 		this.auth = opt.auth;
+		this.db = opt.db;
 
 		this.clusters[this.defaultNodeName] = this.createRedisClient(this.defaultNodeName);
 		this.clusterMode = opt.cluster;
@@ -175,7 +178,7 @@ export class GUIRedisClient {
 
 	createRedisClient(redis_url: string): RedisClient {
 		const protocol = this.tlsMode ? "rediss://" : "redis://"
-		let client = createClient(protocol + redis_url);
+		let client = createClient(protocol + redis_url, {db: this.db});
 		if (this.auth) client.auth(this.auth);
 		promisifyAll(client);
 		return client;
