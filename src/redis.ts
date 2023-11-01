@@ -1,10 +1,10 @@
-import { RedisClient, createClient, ClientOpts } from 'redis';
+import { RedisClient, createClient } from 'redis';
 import { createInterface, Interface, cursorTo, clearScreenDown } from 'readline';
 import { promisifyAll } from 'bluebird';
 import { BaseExecutor, ConsumerFunc, Left, Right, RedirectError, RequestEnd, Result } from './executor';
-const s = require('redis-splitargs');
 import { red, green, yellow } from 'colors';
 import { InputBuffer } from './buf';
+import { splitargs } from './splitargs';
 require('core-js/features/array/flat');
 require('core-js/features/object/entries');
 
@@ -111,7 +111,7 @@ export class GUIRedisClient {
 				this.next = __PR__;
 				return;
 			}
-			let commands: string[] = s(command);
+			let commands: string[] = splitargs(command);
 			if (commands.length !== 0) { // we have commands, so process, otherwise just a new prompt
 				const CMD = commands.shift().toLowerCase();
 				//`exit` and `clear` are not true commands, just part of REPL

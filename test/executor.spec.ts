@@ -160,3 +160,46 @@ test("XADD and XRANGE", async () => {
     expect(mockCallback.mock.calls[3][0]._kind).toBe('Left');
     expect((mockCallback.mock.calls[3][0] as Left<Error>).left.name).toBe("RequestEnd");
 });
+
+test("ZADD and ZRANGE", async () => {
+    let executorZADD = new BaseExecutor(redisClient, ["ZADD", "myzset", "1", "one"]);
+    const mockCallback: jest.Mock<void, Result<Error, string | string[]>[]> = jest.fn();
+    await executorZADD.run(mockCallback);
+    expect(mockCallback.mock.calls.length).toBe(2);
+    expect(mockCallback.mock.calls[0][0]._kind).toBe('Right');
+    expect((mockCallback.mock.calls[0][0] as Right<string>).right).toBe("(integer) 1");
+    expect(mockCallback.mock.calls[1][0]._kind).toBe('Left');
+    expect((mockCallback.mock.calls[1][0] as Left<Error>).left.name).toBe("RequestEnd");
+    let executorZRANGE = new BaseExecutor(redisClient, ["ZRANGE", "myzset", "0", "-1", "WITHSCORES"]);
+    await executorZRANGE.run(mockCallback);
+    expect(mockCallback.mock.calls.length).toBe(4);
+    expect(mockCallback.mock.calls[2][0]._kind).toBe('Right');
+    expect((mockCallback.mock.calls[2][0] as Right<string>).right).toStrictEqual(["1) one", "2) 1"]);
+    expect(mockCallback.mock.calls[3][0]._kind).toBe('Left');
+    expect((mockCallback.mock.calls[3][0] as Left<Error>).left.name).toBe("RequestEnd");
+});
+
+test("ZADD and ZSCAN", async () => {
+    let executorZADD = new BaseExecutor(redisClient, ["ZADD", "yourzset", "1", "first"]);
+    const mockCallback: jest.Mock<void, Result<Error, string | string[]>[]> = jest.fn();
+    await executorZADD.run(mockCallback);
+    expect(mockCallback.mock.calls.length).toBe(2);
+    expect(mockCallback.mock.calls[0][0]._kind).toBe('Right');
+    expect((mockCallback.mock.calls[0][0] as Right<string>).right).toBe("(integer) 1");
+    expect(mockCallback.mock.calls[1][0]._kind).toBe('Left');
+    expect((mockCallback.mock.calls[1][0] as Left<Error>).left.name).toBe("RequestEnd");
+    executorZADD = new BaseExecutor(redisClient, ["ZADD", "yourzset", "2", "second"]);
+    await executorZADD.run(mockCallback);
+    expect(mockCallback.mock.calls.length).toBe(4);
+    expect(mockCallback.mock.calls[2][0]._kind).toBe('Right');
+    expect((mockCallback.mock.calls[2][0] as Right<string>).right).toBe("(integer) 1");
+    expect(mockCallback.mock.calls[3][0]._kind).toBe('Left');
+    expect((mockCallback.mock.calls[3][0] as Left<Error>).left.name).toBe("RequestEnd");
+    let executorZSCAN = new BaseExecutor(redisClient, ["ZSCAN", "yourzset", "0", "COUNT", "2"]);
+    await executorZSCAN.run(mockCallback);
+    expect(mockCallback.mock.calls.length).toBe(6);
+    expect(mockCallback.mock.calls[4][0]._kind).toBe('Right');
+    expect((mockCallback.mock.calls[4][0] as Right<string>).right).toStrictEqual(["1) 0", "2) 1) first", "2) 2) 1", "2) 3) second", "2) 4) 2"]);
+    expect(mockCallback.mock.calls[5][0]._kind).toBe('Left');
+    expect((mockCallback.mock.calls[5][0] as Left<Error>).left.name).toBe("RequestEnd");
+});

@@ -104,13 +104,16 @@ export class BaseExecutor implements Executor {
                         if (jdx === 0) {
                             return format(`%d) %d) %s`, idx + 1, jdx + 1, elem);
                         } else {
-                            return (elem as string[]).map((val, kdx) => {
-                                if (kdx == 0) {
-                                    return format(`   %d) %d) "%s"`, jdx + 1, kdx + 1, val);
-                                } else {
-                                    return format(`      %d) "%s"`, kdx + 1, val);
-                                }
-                            });
+                            if (Array.isArray(elem)) {
+                                return (elem as string[]).map((val, kdx) => {
+                                    if (kdx == 0) {
+                                        return format(`   %d) %d) "%s"`, jdx + 1, kdx + 1, val);
+                                    } else {
+                                        return format(`      %d) "%s"`, kdx + 1, val);
+                                    }
+                                });
+                            }
+                            return format(`%d) %d) %s`, idx + 1, jdx + 1, elem);
                         }
                     }).flat();
                 } else {
